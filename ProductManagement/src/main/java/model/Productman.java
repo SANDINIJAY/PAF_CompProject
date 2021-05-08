@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
+//comment
 public class Productman {
 	//A common method to connect to the DB
 		private Connection connect()
