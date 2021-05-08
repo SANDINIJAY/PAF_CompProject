@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 //comment
+//commect2
 public class Productman {
 	//A common method to connect to the DB
 		private Connection connect()
