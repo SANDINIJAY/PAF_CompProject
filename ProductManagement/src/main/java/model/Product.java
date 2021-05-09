@@ -1,13 +1,9 @@
 package model;
 
 import java.sql.*;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-//comment
-//commect2
-public class Productman {
+
+
+public class Product {
 	//A common method to connect to the DB
 		private Connection connect()
 		{
@@ -16,13 +12,13 @@ public class Productman {
 		{
 		Class.forName("com.mysql.jdbc.Driver");
 		//Provide the correct details: DBServer/DBName, username, password
-		con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/productman", "root", "");
+		con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/product", "root", "");
 		}
 		catch (Exception e)
 		{e.printStackTrace();}
 		return con;
 		}
-		public String insertProductman(String ProID, String ProName, String ProGrade, String ProPrice)
+		public String insertProduct(String ProID, String ProName, String ProGrade, String ProPrice)
 		{
 		String output = "";
 		try
@@ -31,15 +27,15 @@ public class Productman {
 		if (con == null)
 		{return "Error while connecting to the database for inserting."; }
 		// create a prepared statement
-		String query = " INSERT INTO `productman`(`ID`, `ProID`, `ProName`, `ProGrade`, `ProPrice`)"
+		String query = " insert into product (`ID`, `ProID`, `ProName`, `ProGrade`, `ProPrice`)"
 		+ " values (?, ?, ?, ?, ?)";
 		PreparedStatement preparedStmt = con.prepareStatement(query);
 		// binding values
 		preparedStmt.setInt(1, 0);
 		preparedStmt.setString(2, ProID);
-		preparedStmt.setString(3, ProName);
-		preparedStmt.setString(4, ProGrade);
-		preparedStmt.setString(5, ProPrice);
+		preparedStmt.setString(3, ProName);		
+		preparedStmt.setString(4,ProGrade);
+		preparedStmt.setDouble(5,  Double.parseDouble(ProPrice));
 		// execute the statement
 		preparedStmt.execute();
 		con.close();
@@ -47,12 +43,12 @@ public class Productman {
 		}
 		catch (Exception e)
 		{
-		output = "Error while inserting the productman.";
+		output = "Error while inserting the product.";
 		System.err.println(e.getMessage());
 		}
 		return output;
 		}
-		public String readProductman()
+		public String readProduct()
 		{
 		String output = "";
 		try
@@ -64,9 +60,10 @@ public class Productman {
 		output = "<table border='1'><tr><th>Product ID</th>" +
 		"<th>Product Name</th>" +
 		"<th>Product Category</th>"+
-		"<th>Product Price</th>";
+		"<th>Product Price</th>"+
+		"<th>Update</th><th>Remove</th></tr>"; 
 		
-		String query = "SELECT * FROM productman";
+		String query = "select * from product";
 		Statement stmt = con.createStatement();
 		ResultSet rs = stmt.executeQuery(query);
 		// iterate through the rows in the result set
@@ -76,12 +73,15 @@ public class Productman {
 		String ProID = rs.getString("ProID");
 		String ProName = rs.getString("ProName");
 		String ProGrade = rs.getString("ProGrade");
-		String ProPrice = rs.getString("ProPrice");
+		String ProPrice =  Double.toString(rs.getDouble("ProPrice"));
 		// Add into the html table
 		output += "<tr><td>" + ProID + "</td>";
 		output += "<td>" + ProName + "</td>";
 		output += "<td>" + ProGrade + "</td>";
 		output += "<td>" + ProPrice + "</td>";
+		output += "<td><input name='btnUpdate' type='button'  value='Update'  class='btn btn-secondary'>  </td>" + "<td><form method='post' action='product.jsp'>" 
+		+ "<input name='btnRemove' type='submit' value='Remove' class='btn btn-danger' >"
+		+"<input name='ID' type='hidden' value=' " + ID + "'>" + "</form></td></tr>";
 		
 		}
 		con.close();
@@ -90,12 +90,12 @@ public class Productman {
 		}
 		catch (Exception e)
 		{
-		output = "Error while reading the productman.";
+		output = "Error while reading the product.";
 		System.err.println(e.getMessage());
 		}
 		return output;
 		}
-		public String updateProductman(String ID,String ProID, String ProName, String ProGrade, String ProPrice)
+		public String updateProduct(String ID,String ProID, String ProName, String ProGrade, String ProPrice)
 		{
 			String output = "";
 			try
@@ -104,14 +104,14 @@ public class Productman {
 			if (con == null)
 			{return "Error while connecting to the database for updating."; }
 			// create a prepared statement
-			String query = "UPDATE productman SET ProID=?,ProName=?,ProGrade=?,ProPrice=? WHERE ID=? ";
+			String query = "UPDATE product SET ProID=?,ProName=?,ProGrade=?,ProPrice=? WHERE ID=? ";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			// binding values
 			
 			preparedStmt.setString(1, ProID);
 			preparedStmt.setString(2, ProName);
 			preparedStmt.setString(3, ProGrade);
-			preparedStmt.setString(4, ProPrice);
+			preparedStmt.setDouble(4, Double.parseDouble(ProPrice)); 
 			preparedStmt.setInt(5, Integer.parseInt(ID));
 			// execute the statement
 			preparedStmt.execute();
@@ -120,14 +120,14 @@ public class Productman {
 			}
 			catch (Exception e)
 			{
-			output = "Error while updating the productman.";
+			output = "Error while updating the product.";
 			System.err.println(e.getMessage());
 			}
 			return output;
 			}
 		
 		
-			public String deleteProductman(String ID)
+			public String deleteProduct(String ID)
 			{
 			String output = "";
 			try
@@ -136,7 +136,7 @@ public class Productman {
 			if (con == null)
 			{return "Error while connecting to the database for deleting."; }
 			// create a prepared statement
-			String query = "delete from productman where ID=?";
+			String query = "delete from product where ID=?";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			// binding values
 			preparedStmt.setInt(1, Integer.parseInt(ID));
@@ -147,7 +147,7 @@ public class Productman {
 			}
 			catch (Exception e)
 			{
-			output = "Error while deleting the productman.";
+			output = "Error while deleting the product.";
 			System.err.println(e.getMessage());
 			}
 			return output;
