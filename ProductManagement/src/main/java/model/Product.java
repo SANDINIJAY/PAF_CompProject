@@ -57,7 +57,9 @@ public class Product {
 		if (con == null)
 		{return "Error while connecting to the database for reading."; }
 		// Prepare the html table to be displayed
-		output = "<table border='1'><tr><th>Product ID</th>" +
+		output = "<table border='1'><tr>"+
+		"<th>ID</th>" +
+		" <th>Product ID</th>" +
 		"<th>Product Name</th>" +
 		"<th>Product Category</th>"+
 		"<th>Product Price</th>"+
@@ -75,13 +77,16 @@ public class Product {
 		String ProGrade = rs.getString("ProGrade");
 		String ProPrice =  Double.toString(rs.getDouble("ProPrice"));
 		// Add into the html table
-		output += "<tr><td>" + ProID + "</td>";
+		output += "<tr><td>" + ID + "</td>";
+		output +="<td> " + ProID + "</td>";
 		output += "<td>" + ProName + "</td>";
 		output += "<td>" + ProGrade + "</td>";
 		output += "<td>" + ProPrice + "</td>";
-		output += "<td><input name='btnUpdate' type='button'  value='Update'  class='btn btn-secondary'>  </td>" + "<td><form method='post' action='product.jsp'>" 
-		+ "<input name='btnRemove' type='submit' value='Remove' class='btn btn-danger' >"
-		+"<input name='ID' type='hidden' value=' " + ID + "'>" + "</form></td></tr>";
+		
+		 // buttons
+		 output += "<td><input name='btnUpdate' type='button' value='Update' class='btnUpdate btn btn-secondary'></td>"
+				 + "<td><button class='btnRemove btn btn-danger' name='btnRemove' id ='btnRemove' value='"+ ID +"' >Remove</button></td></tr>";
+		 
 		
 		}
 		con.close();
@@ -113,6 +118,7 @@ public class Product {
 			preparedStmt.setString(3, ProGrade);
 			preparedStmt.setDouble(4, Double.parseDouble(ProPrice)); 
 			preparedStmt.setInt(5, Integer.parseInt(ID));
+			
 			// execute the statement
 			preparedStmt.execute();
 			con.close();
