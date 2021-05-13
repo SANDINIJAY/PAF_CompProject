@@ -3,7 +3,7 @@ $(document).ready(function() {
 
 	$("#alertSuccess").hide();
 	$("#alertError").hide();
-	$("#hidProductIDSave").val("");
+	$("#ID").val("");
 	$("#PRODUCT")[0].reset();
 });
 
@@ -32,9 +32,9 @@ $(document).on("click", "#btnSave", function(event) {
 		data : $("#PRODUCT").serialize(),
 		dataType : "text",
 		complete : function(response, status) {
-			//console.log(status);
+		console.log(status);
 			onProductSaveComplete(response.responseText, status);
-			window.location.reload(true);
+		//window.location.reload(true);
 		}
 	});
 
@@ -73,19 +73,22 @@ function onProductSaveComplete(response, status) {
 	$("#PRODUCT")[0].reset();
 }
 
-$(document).on("click", ".btnRemove", function(event) {
-	
-	$.ajax({
-		url : "ProductAPI",
-		type : "DELETE",
-		data : "ID=" + event.target.value,
-		dataType : "text",
-		complete : function(response, status) {
-			onProductDeleteComplete(response.responseText, status);
-			window.location.reload(true);
-		}
-	});
+$(document).on("click", ".btnRemove", function(event)
+{
+ $.ajax(
+ {
+ url : "ProductAPI",
+ type : "DELETE",
+ data : "ID=" + $(this).data("itemid"),
+ dataType : "text",
+ complete : function(response, status)
+ {
+ onProductDeleteComplete(response.responseText, status);
+//window.location.reload(true);
+ }
+ });
 });
+
 
 function onProductDeleteComplete(response, status) {
 	

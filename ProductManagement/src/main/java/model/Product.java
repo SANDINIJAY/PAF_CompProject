@@ -1,7 +1,10 @@
 package model;
 
 import java.sql.*;
-
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class Product {
 	//A common method to connect to the DB
@@ -18,6 +21,7 @@ public class Product {
 		{e.printStackTrace();}
 		return con;
 		}
+		
 		public String insertProduct(String ProID, String ProName, String ProGrade, String ProPrice)
 		{
 		String output = "";
@@ -39,15 +43,21 @@ public class Product {
 		// execute the statement
 		preparedStmt.execute();
 		con.close();
-		output = "Inserted successfully";
+		
+		String newProduct = readProduct();
+		 output = "{\"status\":\"success\", \"data\": \"" +
+		 newProduct + "\"}"; 
+		 
 		}
 		catch (Exception e)
 		{
-		output = "Error while inserting the product.";
+			output = "{\"status\":\"error\", \"data\":\"Error while inserting the product.\"}";
 		System.err.println(e.getMessage());
 		}
 		return output;
 		}
+		
+		//read
 		public String readProduct()
 		{
 		String output = "";
@@ -57,8 +67,8 @@ public class Product {
 		if (con == null)
 		{return "Error while connecting to the database for reading."; }
 		// Prepare the html table to be displayed
-		output = "<table border='1'><tr>"+
-		"<th>ID</th>" +
+		output = "<table width= 100% ><tr>"+
+		" <th> ID </th>" +
 		" <th>Product ID</th>" +
 		"<th>Product Name</th>" +
 		"<th>Product Category</th>"+
@@ -76,18 +86,20 @@ public class Product {
 		String ProName = rs.getString("ProName");
 		String ProGrade = rs.getString("ProGrade");
 		String ProPrice =  Double.toString(rs.getDouble("ProPrice"));
+		
 		// Add into the html table
-		output += "<tr><td>" + ID + "</td>";
-		output +="<td> " + ProID + "</td>";
+		
+		output += "<td>" + ID + "</td>";
+		output += "<td>" + ProID + "</td>";
 		output += "<td>" + ProName + "</td>";
 		output += "<td>" + ProGrade + "</td>";
 		output += "<td>" + ProPrice + "</td>";
 		
 		 // buttons
-		 output += "<td><input name='btnUpdate' type='button' value='Update' class='btnUpdate btn btn-secondary'></td>"
-				 + "<td><button class='btnRemove btn btn-danger' name='btnRemove' id ='btnRemove' value='"+ ID +"' >Remove</button></td></tr>";
-		 
-		
+		output += "<td><input name='btnUpdate' type='button' value='Update' "
+				+ "class='btnUpdate btn btn-secondary' data-itemid='" + ID + "'></td>"
+				+ "<td><input name='btnRemove' type='button' value='Remove' "
+				+ "class='btnRemove btn btn-danger' data-itemid='" + ID + "'></td></tr>"; 
 		}
 		con.close();
 		// Complete the html table
@@ -100,6 +112,8 @@ public class Product {
 		}
 		return output;
 		}
+
+		//Update
 		public String updateProduct(String ID,String ProID, String ProName, String ProGrade, String ProPrice)
 		{
 			String output = "";
@@ -122,11 +136,15 @@ public class Product {
 			// execute the statement
 			preparedStmt.execute();
 			con.close();
-			output = "Updated successfully";
+			
+			String newProduct = readProduct();
+			 output = "{\"status\":\"success\", \"data\": \"" +
+			 newProduct + "\"}"; 
+			 
 			}
 			catch (Exception e)
 			{
-			output = "Error while updating the product.";
+			output = "{\"status\":\"error\", \"data\": \"Error while updating the product.\"}";
 			System.err.println(e.getMessage());
 			}
 			return output;
@@ -149,11 +167,13 @@ public class Product {
 			// execute the statement
 			preparedStmt.execute();
 			con.close();
-			output = "Deleted successfully";
+			
+			String newProduct = readProduct();
+			 output = "{\"status\":\"success\", \"data\": \"" + newProduct + "\"}";
 			}
 			catch (Exception e)
 			{
-			output = "Error while deleting the product.";
+				output = "{\"status\":\"error\", \"data\": \"Error while deleting the product.\"}";
 			System.err.println(e.getMessage());
 			}
 			return output;
